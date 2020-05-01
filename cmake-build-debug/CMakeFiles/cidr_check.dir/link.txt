@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/cidr_check.dir/cidr_check.cpp.o  -o cidr_check 
