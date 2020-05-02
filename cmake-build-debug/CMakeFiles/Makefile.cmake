@@ -48,6 +48,8 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/cidr_check.dir/DependInfo.cmake"
   "CMakeFiles/subnet_extraction.dir/DependInfo.cmake"
+  "CMakeFiles/cidr_check.dir/DependInfo.cmake"
+  "CMakeFiles/cidr_server.dir/DependInfo.cmake"
+  "CMakeFiles/cidr_client.dir/DependInfo.cmake"
   )

@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named subnet_extraction
+
+# Build rule for target.
+subnet_extraction: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 subnet_extraction
+.PHONY : subnet_extraction
+
+# fast build rule for target.
+subnet_extraction/fast:
+	$(MAKE) -f CMakeFiles/subnet_extraction.dir/build.make CMakeFiles/subnet_extraction.dir/build
+.PHONY : subnet_extraction/fast
+
+#=============================================================================
 # Target rules for targets named cidr_check
 
 # Build rule for target.
@@ -124,17 +137,30 @@ cidr_check/fast:
 .PHONY : cidr_check/fast
 
 #=============================================================================
-# Target rules for targets named subnet_extraction
+# Target rules for targets named cidr_server
 
 # Build rule for target.
-subnet_extraction: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 subnet_extraction
-.PHONY : subnet_extraction
+cidr_server: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 cidr_server
+.PHONY : cidr_server
 
 # fast build rule for target.
-subnet_extraction/fast:
-	$(MAKE) -f CMakeFiles/subnet_extraction.dir/build.make CMakeFiles/subnet_extraction.dir/build
-.PHONY : subnet_extraction/fast
+cidr_server/fast:
+	$(MAKE) -f CMakeFiles/cidr_server.dir/build.make CMakeFiles/cidr_server.dir/build
+.PHONY : cidr_server/fast
+
+#=============================================================================
+# Target rules for targets named cidr_client
+
+# Build rule for target.
+cidr_client: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 cidr_client
+.PHONY : cidr_client
+
+# fast build rule for target.
+cidr_client/fast:
+	$(MAKE) -f CMakeFiles/cidr_client.dir/build.make CMakeFiles/cidr_client.dir/build
+.PHONY : cidr_client/fast
 
 cidr_check.o: cidr_check.cpp.o
 
@@ -162,6 +188,60 @@ cidr_check.s: cidr_check.cpp.s
 cidr_check.cpp.s:
 	$(MAKE) -f CMakeFiles/cidr_check.dir/build.make CMakeFiles/cidr_check.dir/cidr_check.cpp.s
 .PHONY : cidr_check.cpp.s
+
+cidr_client.o: cidr_client.cpp.o
+
+.PHONY : cidr_client.o
+
+# target to build an object file
+cidr_client.cpp.o:
+	$(MAKE) -f CMakeFiles/cidr_client.dir/build.make CMakeFiles/cidr_client.dir/cidr_client.cpp.o
+.PHONY : cidr_client.cpp.o
+
+cidr_client.i: cidr_client.cpp.i
+
+.PHONY : cidr_client.i
+
+# target to preprocess a source file
+cidr_client.cpp.i:
+	$(MAKE) -f CMakeFiles/cidr_client.dir/build.make CMakeFiles/cidr_client.dir/cidr_client.cpp.i
+.PHONY : cidr_client.cpp.i
+
+cidr_client.s: cidr_client.cpp.s
+
+.PHONY : cidr_client.s
+
+# target to generate assembly for a file
+cidr_client.cpp.s:
+	$(MAKE) -f CMakeFiles/cidr_client.dir/build.make CMakeFiles/cidr_client.dir/cidr_client.cpp.s
+.PHONY : cidr_client.cpp.s
+
+cidr_server.o: cidr_server.cpp.o
+
+.PHONY : cidr_server.o
+
+# target to build an object file
+cidr_server.cpp.o:
+	$(MAKE) -f CMakeFiles/cidr_server.dir/build.make CMakeFiles/cidr_server.dir/cidr_server.cpp.o
+.PHONY : cidr_server.cpp.o
+
+cidr_server.i: cidr_server.cpp.i
+
+.PHONY : cidr_server.i
+
+# target to preprocess a source file
+cidr_server.cpp.i:
+	$(MAKE) -f CMakeFiles/cidr_server.dir/build.make CMakeFiles/cidr_server.dir/cidr_server.cpp.i
+.PHONY : cidr_server.cpp.i
+
+cidr_server.s: cidr_server.cpp.s
+
+.PHONY : cidr_server.s
+
+# target to generate assembly for a file
+cidr_server.cpp.s:
+	$(MAKE) -f CMakeFiles/cidr_server.dir/build.make CMakeFiles/cidr_server.dir/cidr_server.cpp.s
+.PHONY : cidr_server.cpp.s
 
 main.o: main.cpp.o
 
@@ -197,12 +277,20 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... cidr_check"
-	@echo "... edit_cache"
 	@echo "... subnet_extraction"
+	@echo "... edit_cache"
+	@echo "... cidr_check"
+	@echo "... cidr_server"
+	@echo "... cidr_client"
 	@echo "... cidr_check.o"
 	@echo "... cidr_check.i"
 	@echo "... cidr_check.s"
+	@echo "... cidr_client.o"
+	@echo "... cidr_client.i"
+	@echo "... cidr_client.s"
+	@echo "... cidr_server.o"
+	@echo "... cidr_server.i"
+	@echo "... cidr_server.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

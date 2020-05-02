@@ -5,6 +5,7 @@
       <w>cird</w>
       <w>delim</w>
       <w>hasher</w>
+      <w>stringstream</w>
     </words>
   </dictionary>
 </component>

@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/media/cuongbv/Data/Project/Research/DDoS/subnet-extraction/cidr_server.cpp
+bitset
+-
+set
+-
+sstream
+-
+vector
+-
+iostream
+-
+cmath
+-
+fstream
+-
+sys/socket.h
+-
+netinet/in.h
+-
+cstring
+-
+unistd.h
+-
+

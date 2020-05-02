@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/cidr_client.dir/cidr_client.cpp.o  -o cidr_client 
