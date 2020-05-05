@@ -142,6 +142,8 @@ std::string addValue(const std::string& inputCIDR) {
     std::stringstream stringstream;
     std::vector<int> hashIndex = hashFunc(inputCIDR);
     for (int i = 0; i < NUM_HASH_FUNCS; ++i) bloomFilter[hashIndex[i]] = true;
+    std::string stableString = cidrToStableString(inputCIDR);
+    stableCIDRMap.insert(std::pair<std::string, std::string>(stableString, inputCIDR));
     stringstream << "Complete add \"" << inputCIDR << "\" to the Bloom filter";
     startState = false;
     ++numElement;
@@ -181,7 +183,11 @@ std::string loadCheckFile(const std::string& checkFilePath) {
                 }
             }
             if (isOn) {
-                stringstream << ipAddress << " on CIDR list" << std::endl;
+                if (stableCIDRMap.find(ipBitString) == stableCIDRMap.end()) {
+                    stringstream << "False positive" << std::endl;
+                    continue;
+                }
+                stringstream << "on " << stableCIDRMap[ipBitString] << std::endl;
                 break;
             }
         }
