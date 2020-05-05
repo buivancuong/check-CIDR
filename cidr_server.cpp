@@ -13,6 +13,7 @@
 #include <netinet/in.h>
 #include <cstring>
 #include <unistd.h>
+#include <map>
 
 #define PORT 6596
 #define NUM_HASH_FUNCS 4
@@ -21,6 +22,7 @@ std::bitset<BF_SIZE> bloomFilter;
 int numElement = 0;
 bool startState = false;
 std::set<int> maskLayer;
+std::map<std::string, std::string> stableCIDRMap;
 
 template <class Container>
 void splitString(const std::string& str, Container& cont, char delim = ' ') {
@@ -127,6 +129,10 @@ std::string loadInputFile(const std::string& inputFilePath) {
         }
         ++numElement;
     }
+    for (const std::string& cidr : cidrVector) {
+        std::string stableString = cidrToStableString(cidr);
+        stableCIDRMap.insert(std::pair<std::string, std::string>(stableString, cidr));
+    }
     stringstream << "Complete load the new input file \"" << inputFilePath << "\" into the Bloom filter";
     startState = false;
     return stringstream.str();
@@ -201,7 +207,11 @@ std::string checkValue(const std::string& ipAddress) {
             }
         }
         if (isOn) {
-            stringstream << "on";
+            if (stableCIDRMap.find(ipBitString) == stableCIDRMap.end()) {
+                stringstream << "False positive" << std::endl;
+                continue;
+            }
+            stringstream << "on " << stableCIDRMap[ipBitString] << std::endl;
             return stringstream.str();
         }
     }
