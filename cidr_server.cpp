@@ -223,6 +223,7 @@ std::string restartBF() {
     std::stringstream stringstream;
     startState = true;
     bloomFilter.reset();
+    stableCIDRMap.clear();
     stringstream << "The Bloom filter has been reset!";
     numElement = 0;
     return stringstream.str();
