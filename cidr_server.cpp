@@ -112,6 +112,7 @@ std::string loadInputFile(const std::string& inputFilePath, const std::string& c
     while (!cidrFile.eof()) {
         std::getline(cidrFile, cirdString);
         if (cirdString.empty()) continue;
+        if (cirdString.front() == '#') continue;
         if (cirdString.back() == '\r') cirdString.pop_back();
         cidrVector.push_back(cirdString);
     }
