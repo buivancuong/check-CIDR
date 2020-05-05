@@ -56,7 +56,6 @@ std::bitset<32> ipToBitset(const std::string& ip) {
 }
 
 std::string cidrToStableString(const std::string& cidr) {
-    std::cout << cidr << std::endl;
     std::vector<std::string> contCIDR;
     splitString(cidr, contCIDR, '/');
     if (contCIDR.size() != 2) {
@@ -295,10 +294,6 @@ int main(int argc, char const *argv[]) {
         std::vector<std::string> requestCommandVector;
         std::string passingCommand (receiveBuffer);
         splitString(passingCommand, requestCommandVector);
-        for (const std::string& command : requestCommandVector) {
-            std::cout << command << " ";
-        }
-        std::cout << std::endl;
 
         if (requestCommandVector[0] == "info") {
             std::string passingString = showBFInfo();
