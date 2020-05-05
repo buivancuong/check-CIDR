@@ -29,9 +29,16 @@ int main(int argc, char const *argv[]) {
     // Handle command line arguments
     std::string command (argv[1]);      // The command will impact with a Socket Server side
     std::string param;      // The parameter will pass to a Socket Server side
-    if (argc == 3) param = argv[2];
-    else param = "";
-    std::string fullCommand (command + " " + param);
+    std::string local;
+    if (argc == 3) {
+        param = argv[2];
+        local = "";
+    }
+    if (argc == 4) {
+        param = argv[2];
+        local = argv[3];
+    }
+    std::string fullCommand (command + " " + param + " " + local);
     char *passingCommand = const_cast<char *>(fullCommand.c_str());
 
     char receiveBuffer[1024] = {0};     // The buffer which will contain a response from a Socket Server

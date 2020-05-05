@@ -22,7 +22,7 @@ std::bitset<BF_SIZE> bloomFilter;
 int numElement = 0;
 bool startState = false;
 std::set<int> maskLayer;
-std::map<std::string, std::string> stableCIDRMap;
+std::map<std::string, std::pair<std::string, std::string> > stableCIDRMap;
 
 template <class Container>
 void splitString(const std::string& str, Container& cont, char delim = ' ') {
@@ -56,6 +56,7 @@ std::bitset<32> ipToBitset(const std::string& ip) {
 }
 
 std::string cidrToStableString(const std::string& cidr) {
+    std::cout << cidr << std::endl;
     std::vector<std::string> contCIDR;
     splitString(cidr, contCIDR, '/');
     if (contCIDR.size() != 2) {
@@ -63,9 +64,9 @@ std::string cidrToStableString(const std::string& cidr) {
     }
     std::bitset<32> cidrNetwork = ipToBitset(contCIDR[0]);
     std::string stableString = cidrNetwork.to_string();
-    std::bitset<32> cidrMask = ipToBitset(contCIDR[1]);
-    maskLayer.insert(cidrMask.count());
-    for (int i = 0; i < 32 - cidrMask.count(); ++i) {
+    std::bitset<32> netMask = ipToBitset(contCIDR[1]);
+    maskLayer.insert(netMask.count());
+    for (int i = 0; i < 32 - netMask.count(); ++i) {
         stableString.pop_back();
     }
     return stableString;
@@ -73,16 +74,16 @@ std::string cidrToStableString(const std::string& cidr) {
 
 std::string showUsage() {
     std::stringstream stringstream;
-    stringstream << "|*****************************************************|" << std::endl;
-    stringstream << "|***************** Bloom Filter CIDR *****************|" << std::endl;
-    stringstream << "|*****************************************************|" << std::endl;
-    stringstream << "| Show Bloom filter info: $ ./cidr_client info        |" << std::endl;
-    stringstream << "| Load new input file: $ ./cidr_client load <path>    |" << std::endl;
-    stringstream << "| Add new value: $ ./cidr_client add <cidr>           |" << std::endl;
-    stringstream << "| Load check file: $ ./cidr_client check_file <path>  |" << std::endl;
-    stringstream << "| Check new value: $ ./cidr_client check <ip_addr>    |" << std::endl;
-    stringstream << "| Reset Bloom filter: $ ./cidr_client reset           |" << std::endl;
-    stringstream << "|*****************************************************|";
+    stringstream << "|*************************************************************|" << std::endl;
+    stringstream << "|********************* Bloom Filter CIDR *********************|" << std::endl;
+    stringstream << "|*************************************************************|" << std::endl;
+    stringstream << "| Show Bloom filter info: $ ./cidr_client info                |" << std::endl;
+    stringstream << "| Load new input file: $ ./cidr_client load <path> <location> |" << std::endl;
+    stringstream << "| Add new value: $ ./cidr_client add <cidr> <location>        |" << std::endl;
+    stringstream << "| Load check file: $ ./cidr_client check_file <path>          |" << std::endl;
+    stringstream << "| Check new value: $ ./cidr_client check <ip_addr>            |" << std::endl;
+    stringstream << "| Reset Bloom filter: $ ./cidr_client reset                   |" << std::endl;
+    stringstream << "|*************************************************************|";
     startState = false;
     return stringstream.str();
 }
@@ -99,7 +100,7 @@ std::string showBFInfo() {
     return stringstream.str();
 }
 
-std::string loadInputFile(const std::string& inputFilePath) {
+std::string loadInputFile(const std::string& inputFilePath, const std::string& cidrLocation) {
     std::stringstream stringstream;
     std::ifstream cidrFile;
     std::string cirdString;
@@ -131,19 +132,21 @@ std::string loadInputFile(const std::string& inputFilePath) {
     }
     for (const std::string& cidr : cidrVector) {
         std::string stableString = cidrToStableString(cidr);
-        stableCIDRMap.insert(std::pair<std::string, std::string>(stableString, cidr));
+        std::pair<std::string, std::string> cidr_location(cidr, cidrLocation);
+        stableCIDRMap.insert(std::pair<std::string, std::pair<std::string, std::string> >(stableString, cidr_location));
     }
     stringstream << "Complete load the new input file \"" << inputFilePath << "\" into the Bloom filter";
     startState = false;
     return stringstream.str();
 }
 
-std::string addValue(const std::string& inputCIDR) {
+std::string addValue(const std::string& inputCIDR, const std::string& cidrLocation) {
     std::stringstream stringstream;
     std::vector<int> hashIndex = hashFunc(inputCIDR);
     for (int i = 0; i < NUM_HASH_FUNCS; ++i) bloomFilter[hashIndex[i]] = true;
     std::string stableString = cidrToStableString(inputCIDR);
-    stableCIDRMap.insert(std::pair<std::string, std::string>(stableString, inputCIDR));
+    std::pair<std::string, std::string> cidr_location(inputCIDR, cidrLocation);
+    stableCIDRMap.insert(std::pair<std::string, std::pair<std::string, std::string> >(stableString, cidr_location));
     stringstream << "Complete add \"" << inputCIDR << "\" to the Bloom filter";
     startState = false;
     ++numElement;
@@ -154,14 +157,14 @@ std::string loadCheckFile(const std::string& checkFilePath) {
     std::stringstream stringstream;
     std::ifstream ipCheckFile;
     std::vector<std::string> ipCheckVector;
-    std::string hashValueString;
+    std::string ipAddrString;
     // Load all of values in checking file into memory
     ipCheckFile.open(checkFilePath, std::ios::in);
     while (!ipCheckFile.eof()) {
-        std::getline(ipCheckFile, hashValueString);
-        if (hashValueString.empty()) continue;
-        if (hashValueString.back() == '\r') hashValueString.pop_back();
-        ipCheckVector.push_back(hashValueString);
+        std::getline(ipCheckFile, ipAddrString);
+        if (ipAddrString.empty()) continue;
+        if (ipAddrString.back() == '\r') ipAddrString.pop_back();
+        ipCheckVector.push_back(ipAddrString);
     }
     if (ipCheckVector.empty()) {
         stringstream << "The check file is empty!";
@@ -187,7 +190,7 @@ std::string loadCheckFile(const std::string& checkFilePath) {
                     stringstream << "False positive" << std::endl;
                     continue;
                 }
-                stringstream << "on " << stableCIDRMap[ipBitString] << std::endl;
+                stringstream << "on " << stableCIDRMap[ipBitString].first << " of " << stableCIDRMap[ipBitString].second << std::endl;
                 break;
             }
         }
@@ -217,7 +220,7 @@ std::string checkValue(const std::string& ipAddress) {
                 stringstream << "False positive" << std::endl;
                 continue;
             }
-            stringstream << "on " << stableCIDRMap[ipBitString] << std::endl;
+            stringstream << "on " << stableCIDRMap[ipBitString].first << " of " << stableCIDRMap[ipBitString].second << std::endl;
             return stringstream.str();
         }
     }
@@ -292,6 +295,10 @@ int main(int argc, char const *argv[]) {
         std::vector<std::string> requestCommandVector;
         std::string passingCommand (receiveBuffer);
         splitString(passingCommand, requestCommandVector);
+        for (const std::string& command : requestCommandVector) {
+            std::cout << command << " ";
+        }
+        std::cout << std::endl;
 
         if (requestCommandVector[0] == "info") {
             std::string passingString = showBFInfo();
@@ -300,8 +307,8 @@ int main(int argc, char const *argv[]) {
         }
 
         if (requestCommandVector[0] == "load") {
-            if (requestCommandVector.size() > 1) {
-                std::string response = loadInputFile(requestCommandVector[1]);
+            if (requestCommandVector.size() > 2) {
+                std::string response = loadInputFile(requestCommandVector[1], requestCommandVector[2]);
                 send(incomingClient, response.c_str(), strlen(response.c_str()), 0);
                 continue;
             }
@@ -310,8 +317,8 @@ int main(int argc, char const *argv[]) {
         }
 
         if (requestCommandVector[0] == "add") {
-            if (requestCommandVector.size() > 1) {
-                std::string response = addValue(requestCommandVector[1]);
+            if (requestCommandVector.size() > 2) {
+                std::string response = addValue(requestCommandVector[1], requestCommandVector[2]);
                 send(incomingClient, response.c_str(), strlen(response.c_str()), 0);
                 continue;
             }
