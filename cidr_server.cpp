@@ -73,16 +73,16 @@ std::string cidrToStableString(const std::string& cidr) {
 
 std::string showUsage() {
     std::stringstream stringstream;
-    stringstream << "|*************************************************************|" << std::endl;
-    stringstream << "|********************* Bloom Filter CIDR *********************|" << std::endl;
-    stringstream << "|*************************************************************|" << std::endl;
-    stringstream << "| Show Bloom filter info: $ ./cidr_client info                |" << std::endl;
-    stringstream << "| Load new input file: $ ./cidr_client load <path> <location> |" << std::endl;
-    stringstream << "| Add new value: $ ./cidr_client add <cidr> <location>        |" << std::endl;
-    stringstream << "| Load check file: $ ./cidr_client check_file <path>          |" << std::endl;
-    stringstream << "| Check new value: $ ./cidr_client check <ip_addr>            |" << std::endl;
-    stringstream << "| Reset Bloom filter: $ ./cidr_client reset                   |" << std::endl;
-    stringstream << "|*************************************************************|";
+    stringstream << "|*******************************************************|" << std::endl;
+    stringstream << "|****************** Bloom Filter CIDR ******************|" << std::endl;
+    stringstream << "|*******************************************************|" << std::endl;
+    stringstream << "| Show Bloom filter info: $ ./cidr_client info          |" << std::endl;
+    stringstream << "| Load new input file: $ ./cidr_client load <path>      |" << std::endl;
+    stringstream << "| Add new value: $ ./cidr_client add <cidr> <location>  |" << std::endl;
+    stringstream << "| Load check file: $ ./cidr_client check_file <path>    |" << std::endl;
+    stringstream << "| Check new value: $ ./cidr_client check <ip_addr>      |" << std::endl;
+    stringstream << "| Reset Bloom filter: $ ./cidr_client reset             |" << std::endl;
+    stringstream << "|*******************************************************|";
     startState = false;
     return stringstream.str();
 }
@@ -99,41 +99,44 @@ std::string showBFInfo() {
     return stringstream.str();
 }
 
-std::string loadInputFile(const std::string& inputFilePath, const std::string& cidrLocation) {
+std::string loadInputFile(const std::string& inputFilePath) {
     std::stringstream stringstream;
     std::ifstream cidrFile;
-    std::string cirdString;
-    std::vector<std::string> cidrVector;
+    std::string cird_locationString;
+    std::vector<std::string> cidr_locationVector;
     cidrFile.open(inputFilePath);
     if (cidrFile.fail()) {
         stringstream << "Fail input CIDR file!";
         return stringstream.str();
     }
     while (!cidrFile.eof()) {
-        std::getline(cidrFile, cirdString);
-        if (cirdString.empty()) continue;
-        if (cirdString.front() == '#') continue;
-        if (cirdString.back() == '\r') cirdString.pop_back();
-        cidrVector.push_back(cirdString);
+        std::getline(cidrFile, cird_locationString);
+        if (cird_locationString.empty()) continue;
+        if (cird_locationString.front() == '#') continue;
+        if (cird_locationString.back() == '\r') cird_locationString.pop_back();
+        cidr_locationVector.push_back(cird_locationString);
     }
-    if (cidrVector.empty()) {
+    if (cidr_locationVector.empty()) {
         stringstream << "The input CIDR file is empty!";
         return stringstream.str();
     }
     cidrFile.close();
 
-    for (const std::string& cidr : cidrVector) {
+    for (const std::string& cidr_location : cidr_locationVector) {
+        std::vector<std::string> cidr_locationContainer;
+        splitString(cidr_location, cidr_locationContainer, ',');
+        std::string cidr(cidr_locationContainer[0]);
+        std::string location (cidr_locationContainer[1]);
+
         std::string stableString = cidrToStableString(cidr);
         std::vector<int> hashIndex = hashFunc(stableString);
         for (int i = 0; i < NUM_HASH_FUNCS; ++i) {
             bloomFilter[hashIndex[i]] = true;
         }
+        std::pair<std::string, std::string> cidr_locationPair = std::pair<std::string, std::string>(cidr, location);
+        stableCIDRMap.insert(std::pair<std::string, std::pair<std::string, std::string> >(stableString, cidr_locationPair));
+
         ++numElement;
-    }
-    for (const std::string& cidr : cidrVector) {
-        std::string stableString = cidrToStableString(cidr);
-        std::pair<std::string, std::string> cidr_location(cidr, cidrLocation);
-        stableCIDRMap.insert(std::pair<std::string, std::pair<std::string, std::string> >(stableString, cidr_location));
     }
     stringstream << "Complete load the new input file \"" << inputFilePath << "\" into the Bloom filter";
     startState = false;
@@ -142,10 +145,12 @@ std::string loadInputFile(const std::string& inputFilePath, const std::string& c
 
 std::string addValue(const std::string& inputCIDR, const std::string& cidrLocation) {
     std::stringstream stringstream;
-    std::vector<int> hashIndex = hashFunc(inputCIDR);
-    for (int i = 0; i < NUM_HASH_FUNCS; ++i) bloomFilter[hashIndex[i]] = true;
     std::string stableString = cidrToStableString(inputCIDR);
-    std::pair<std::string, std::string> cidr_location(inputCIDR, cidrLocation);
+    std::vector<int> hashIndex = hashFunc(stableString);
+    for (int i = 0; i < NUM_HASH_FUNCS; ++i) {
+        bloomFilter[hashIndex[i]] = true;
+    }
+    std::pair<std::string, std::string> cidr_location = std::pair<std::string, std::string>(inputCIDR, cidrLocation);
     stableCIDRMap.insert(std::pair<std::string, std::pair<std::string, std::string> >(stableString, cidr_location));
     stringstream << "Complete add \"" << inputCIDR << "\" to the Bloom filter";
     startState = false;
@@ -303,8 +308,8 @@ int main(int argc, char const *argv[]) {
         }
 
         if (requestCommandVector[0] == "load") {
-            if (requestCommandVector.size() > 2) {
-                std::string response = loadInputFile(requestCommandVector[1], requestCommandVector[2]);
+            if (requestCommandVector.size() > 1) {
+                std::string response = loadInputFile(requestCommandVector[1]);
                 send(incomingClient, response.c_str(), strlen(response.c_str()), 0);
                 continue;
             }
