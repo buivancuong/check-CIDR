@@ -229,7 +229,7 @@ std::string checkValue(const std::string& ipAddress) {
             return stringstream.str();
         }
     }
-    stringstream << "not on";
+    stringstream << "nonexistent";
     return stringstream.str();
 }
 
