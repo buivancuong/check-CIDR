@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/media/cuongbv/Data/Project/Research/DDoS/subnet-extraction/cidr_server.cpp" "/media/cuongbv/Data/Project/Research/DDoS/subnet-extraction/cmake-build-debug/CMakeFiles/cidr_server.dir/cidr_server.cpp.o"
+  "/home/cuongbv/Project/check-CIDR/cidr_server.cpp" "/home/cuongbv/Project/check-CIDR/cmake-build-debug/CMakeFiles/cidr_server.dir/cidr_server.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

@@ -195,7 +195,7 @@ std::string loadCheckFile(const std::string& checkFilePath) {
                     stringstream << "False positive" << std::endl;
                     continue;
                 }
-                stringstream << "on " << stableCIDRMap[ipBitString].first << " of " << stableCIDRMap[ipBitString].second << std::endl;
+                stringstream << stableCIDRMap[ipBitString].second << std::endl;
                 break;
             }
         }
@@ -225,7 +225,7 @@ std::string checkValue(const std::string& ipAddress) {
                 stringstream << "False positive" << std::endl;
                 continue;
             }
-            stringstream << "on " << stableCIDRMap[ipBitString].first << " of " << stableCIDRMap[ipBitString].second << std::endl;
+            stringstream << stableCIDRMap[ipBitString].second;
             return stringstream.str();
         }
     }

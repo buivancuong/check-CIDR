@@ -1,6 +1,6 @@
-/media/cuongbv/Data/Project/Research/DDoS/subnet-extraction/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/media/cuongbv/Data/Project/Research/DDoS/subnet-extraction/cmake-build-debug/CMakeFiles/subnet_extraction.dir
-/media/cuongbv/Data/Project/Research/DDoS/subnet-extraction/cmake-build-debug/CMakeFiles/edit_cache.dir
-/media/cuongbv/Data/Project/Research/DDoS/subnet-extraction/cmake-build-debug/CMakeFiles/cidr_check.dir
-/media/cuongbv/Data/Project/Research/DDoS/subnet-extraction/cmake-build-debug/CMakeFiles/cidr_server.dir
-/media/cuongbv/Data/Project/Research/DDoS/subnet-extraction/cmake-build-debug/CMakeFiles/cidr_client.dir
+/home/cuongbv/Project/check-CIDR/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/cuongbv/Project/check-CIDR/cmake-build-debug/CMakeFiles/subnet_extraction.dir
+/home/cuongbv/Project/check-CIDR/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/cuongbv/Project/check-CIDR/cmake-build-debug/CMakeFiles/cidr_check.dir
+/home/cuongbv/Project/check-CIDR/cmake-build-debug/CMakeFiles/cidr_server.dir
+/home/cuongbv/Project/check-CIDR/cmake-build-debug/CMakeFiles/cidr_client.dir
